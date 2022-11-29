@@ -23,7 +23,7 @@ namespace Chatroom.Services
         {
             var message = rabbitMQService.ConsumerRabbitMQ(chatId);
 
-            if (message.UserName != name)
+            if (message != null && message.UserName != name)
             {
                 await SendMessage(new ChatMessageViewModel
                 {
@@ -49,7 +49,7 @@ namespace Chatroom.Services
 
                 await chatRepository.SendMessage(mapper.Map<ChatMessage>(message));
             }
-            }
+        }
 
         private async Task VerifyChatRoom(ChatRoomViewModel chatRoom)
         {

@@ -43,21 +43,22 @@ namespace Chatroom.Controllers
         [Authorize]
         [HttpPost]
         [SwaggerResponse(StatusCodes.Status200OK, null, typeof(ChatMessageViewModel))]
-        public async Task<IActionResult> SendMessage(string message)
+        public async Task<IActionResult> SendMessage(string message, int chatroomId)
         {
             try
             {
                 await chatService.SendMessage(new ChatMessageViewModel
                 {
-                    ChatRoom = new ChatRoomViewModel { Id =  1 /*chatRoomId*/ },
+                    ChatRoom = new ChatRoomViewModel { Id = chatroomId },
                     Content = message,
                     UserName = User.Identity.Name,
                 });
+
                 return Ok();
             }
-            catch
+            catch (Exception e)
             {
-                return BadRequest();
+                return BadRequest(e.Message);
             }
         }
 
@@ -73,13 +74,11 @@ namespace Chatroom.Controllers
         {
             try
             {
-                var messageList = await chatService.GetMessages(chatId, User.Identity.Name);
-                return PartialView("_ChatBox", messageList);
+                return Ok(await chatService.GetMessages(chatId, User.Identity.Name));
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-
-                return BadRequest(ex.Message);
+                return BadRequest(e.Message);
             }
         }
     }
